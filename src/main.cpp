@@ -4,15 +4,15 @@
 #include <ClickEncoder.h>
 #include <TimerOne.h>
 
-const uint8_t RXLED = 15;
-const uint8_t SWITCH_PROGRAM = 6;
-const uint8_t BUTTON_MUTE = 5;
+const uint8_t RXLED = 5;
+const uint8_t SWITCH_PROGRAM = 3;
+const uint8_t BUTTON_MUTE = 15;
 
 Button program = Button();
 Bounce mute = Bounce();
-boolean hidEnabled = false;
+boolean hidEnabled = true;
 
-ClickEncoder encoder(A1, A0);
+ClickEncoder encoder(A0, A1);
 int16_t current, value;
 
 void timerIsr() {
@@ -23,14 +23,14 @@ void enableHid() {
   Consumer.begin();
   Serial.println("enableHid");
   hidEnabled = true;
-  digitalWrite(RXLED, HIGH);
+  digitalWrite(RXLED, LOW);
 }
 
 void disableHid() {
   Consumer.end();
   Serial.println("disableHid");
   hidEnabled = false;
-  digitalWrite(RXLED, LOW);
+  digitalWrite(RXLED, HIGH);
 }
 
 void toggleMute() {
@@ -47,26 +47,27 @@ void handleMute() {
 
 void handleProgram() {
     program.update();
-    if (program.pressed() && !hidEnabled) {
+    if (program.released() && !hidEnabled) {
       enableHid();
-      // toggleMute();
-  } else if (program.released() && hidEnabled) {
+    } else if (program.pressed() && hidEnabled) {
       disableHid();
-  }
+    }
 }
 
 void handleVolume() {
-  value += encoder.getValue();
-  if (value > current) {
+  current += encoder.getValue();
+
+  auto diff = current - value;
+  if (diff < 0) {
       Consumer.write(MEDIA_VOL_UP);
       Serial.print(value);
       Serial.println(" volDown");
-      current = value;
-  } else if (value < current) {
+      value = current;
+  } else if (diff > 0) {
       Consumer.write(MEDIA_VOL_DOWN);
       Serial.print(value);
       Serial.println(" volUp");
-      current = value;
+      value = current;
   }
 }
 
@@ -81,7 +82,7 @@ void setup() {
   mute.interval(5);
 
   program.attach(SWITCH_PROGRAM, INPUT_PULLUP);
-  program.interval(25);
+  program.interval(100);
   program.setPressedState(LOW);
 
   Timer1.initialize(1000);
