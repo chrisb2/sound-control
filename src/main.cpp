@@ -75,8 +75,6 @@ void setup() {
     pinMode(RXLED, OUTPUT);
     digitalWrite(RXLED, LOW);
 
-    pinMode(BUTTON_MUTE, INPUT);
-    digitalWrite(BUTTON_MUTE, HIGH);
     mute.attach(BUTTON_MUTE, INPUT_PULLUP);
     mute.interval(5);
 
