@@ -13,7 +13,7 @@ Bounce mute = Bounce();
 boolean hidEnabled = true;
 
 ClickEncoder encoder(A0, A1);
-int16_t current, value;
+int16_t newVolume, existingVolume;
 
 void timerIsr() {
     encoder.service();
@@ -21,6 +21,7 @@ void timerIsr() {
 
 void enableHid() {
     Consumer.begin();
+    Keyboard.begin();
     Serial.println("enableHid");
     hidEnabled = true;
     digitalWrite(RXLED, LOW);
@@ -28,20 +29,33 @@ void enableHid() {
 
 void disableHid() {
     Consumer.end();
+    Keyboard.end();
     Serial.println("disableHid");
     hidEnabled = false;
     digitalWrite(RXLED, HIGH);
 }
 
-void toggleMute() {
-    Serial.println("toggleMute");
+void toggleMuteSpeaker() {
+    Serial.println("toggleMuteSpeaker");
     Consumer.write(MEDIA_VOLUME_MUTE);
+}
+
+void toggleMuteMicrophone() {
+    /*
+       The USB HIB specification does not provide the ability to mute/unmute the
+       microphone, so this functionality relies on the installation of a utility
+       program on the PC such as MicMute (https://sourceforge.net/projects/micmute/)
+       to listen for a key combination and mute/unmute the microphone.
+     */
+    Serial.println("toggleMuteMicrophone");
+    Keyboard.write(KEY_LEFT_CTRL);
+    Keyboard.write(KEY_LEFT_ALT);
 }
 
 void handleMute() {
     mute.update();
     if (mute.fell()) {
-        toggleMute();
+        toggleMuteMicrophone();
     }
 }
 
@@ -55,18 +69,18 @@ void handleProgram() {
 }
 
 void handleVolume() {
-    current += encoder.getValue();
-    auto diff = current - value;
+    newVolume += encoder.getValue();
+    auto diff = newVolume - existingVolume;
     if (diff < 0) {
         Consumer.write(MEDIA_VOL_UP);
-        Serial.print(value);
+        Serial.print(newVolume);
         Serial.println(" volDown");
-        value = current;
+        existingVolume = newVolume;
     } else if (diff > 0) {
         Consumer.write(MEDIA_VOL_DOWN);
-        Serial.print(value);
+        Serial.print(newVolume);
         Serial.println(" volUp");
-        value = current;
+        existingVolume = newVolume;
     }
 }
 
