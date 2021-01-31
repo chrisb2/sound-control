@@ -48,8 +48,8 @@ void toggleMuteMicrophone() {
        to listen for a key combination and mute/unmute the microphone.
      */
     Serial.println("toggleMuteMicrophone");
-    Keyboard.write(KEY_LEFT_CTRL);
     Keyboard.write(KEY_LEFT_ALT);
+    Keyboard.write(KEY_Z);
 }
 
 void handleMute() {
