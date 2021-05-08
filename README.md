@@ -2,7 +2,8 @@
 
 This project uses an Sparkfun ProMicro development board (Atmel 32u4 microprocessor) and a rotary encoder to create an external volume control for a PC. The objective is to make it easy to control the volume and mute the microphone during video calls.
 
-The USB HID specification does not provide the ability to mute/unmute the microphone, so this functionality relies on the installation of a utility program on the PC such as [MicMute](https://sourceforge.net/projects/micmute/) to listen for a key combination and mute/unmute the microphone. See the toggleMuteMicrophone() method for the current key combination.
+The USB HID specification does not provide the ability to mute/unmute the microphone, so this functionality relies on the installation of a utility program on the PC such as [MicMute](https://sourceforge.net/projects/micmute/) to listen for a key combination and mute/unmute the microphone, or key
+combinations supported by specific applications. See the toggleMuteMicrophone() method for the current key combination.
 
 The circuit schematic is shown below.
 ![Circuit Schematic](./docs/schematic.png)

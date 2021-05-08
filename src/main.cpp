@@ -45,11 +45,18 @@ void toggleMuteMicrophone() {
        The USB HIB specification does not provide the ability to mute/unmute the
        microphone, so this functionality relies on the installation of a utility
        program on the PC such as MicMute (https://sourceforge.net/projects/micmute/)
-       to listen for a key combination and mute/unmute the microphone.
+       to listen for a key combination and mute/unmute the microphone, or key
+       combinations supported by specific applications.
      */
     Serial.println("toggleMuteMicrophone");
-    Keyboard.write(KEY_LEFT_ALT);
-    Keyboard.write(KEY_Z);
+    // Google Meet
+    Keyboard.press(KEY_RIGHT_CTRL);
+    Keyboard.write(KEY_D);
+    Keyboard.release(KEY_RIGHT_CTRL);
+    // Slack
+    Keyboard.press(KEY_RIGHT_SHIFT);
+    Keyboard.write(KEY_M);
+    Keyboard.release(KEY_RIGHT_SHIFT);
 }
 
 void handleMute() {
