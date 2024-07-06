@@ -49,14 +49,12 @@ void toggleMuteMicrophone() {
        combinations supported by specific applications.
      */
     Serial.println("toggleMuteMicrophone");
-    // Google Meet
+    // Microsoft Outlook Meeting
     Keyboard.press(KEY_RIGHT_CTRL);
-    Keyboard.write(KEY_D);
-    Keyboard.release(KEY_RIGHT_CTRL);
-    // Slack
     Keyboard.press(KEY_RIGHT_SHIFT);
     Keyboard.write(KEY_M);
     Keyboard.release(KEY_RIGHT_SHIFT);
+    Keyboard.release(KEY_RIGHT_CTRL);
 }
 
 void handleMute() {
